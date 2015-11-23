@@ -44,11 +44,10 @@ public class RingMigration implements Migration<Object>
         // The first batch of immigrants is from the last island to the first.
         List<EvaluatedCandidate<S>> lastIsland = islandPopulations.get(islandPopulations.size() - 1);
         Collections.shuffle(lastIsland, rng);
-        List<EvaluatedCandidate<S>> migrants = lastIsland.subList(lastIsland.size() - migrantCount, lastIsland.size());
+        List<EvaluatedCandidate<S>> migrants = lastIsland.subList(Math.max(0, lastIsland.size() - migrantCount), lastIsland.size());
 
         for (List<EvaluatedCandidate<S>> island : islandPopulations)
         {
-            int migrantCountLocal =  Math.min(island.size(),migrantCount);
             // Migrants from the last island are immigrants for this island.
             List<EvaluatedCandidate<S>> immigrants = migrants;
             if (island != lastIsland) // We've already migrated individuals from the last island.
@@ -56,13 +55,13 @@ public class RingMigration implements Migration<Object>
                 // Select the migrants that will move to the next island to make room for the immigrants here.
                 // Randomise the population so that there is no bias concerning which individuals are migrated.
                 Collections.shuffle(island, rng);
-                migrants = new ArrayList<EvaluatedCandidate<S>>(island.subList(island.size() - migrantCountLocal, island.size()));
+                migrants = new ArrayList<EvaluatedCandidate<S>>(island.subList(Math.max(0,island.size() - migrantCount), island.size()));
             }
             // Copy the immigrants over the last members of the population (those that are themselves
             // migrating to the next island).
-            for (int i = 0; i < immigrants.size(); i++)
+            for (int i = immigrants.size() - 1,j = island.size() - 1; i >= 0 && j >= 0; i--,j--)
             {
-                island.set(island.size() - migrantCountLocal + i, immigrants.get(i));
+                island.set(j, immigrants.get(i));
             }
         }
     }
