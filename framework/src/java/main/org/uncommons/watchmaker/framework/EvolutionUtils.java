@@ -116,8 +116,9 @@ public final class EvolutionUtils
         {
             stats.addValue(candidate.getFitness());
         }
-        return new PopulationData<T>(evaluatedPopulation.get(0).getCandidate(),
-                                     evaluatedPopulation.get(0).getFitness(),
+        EvaluatedCandidate<T> e = evaluatedPopulation.get(0);
+        return new PopulationData<T>(e.getCandidate(),
+                                     e.getFitness(),
                                      stats.getArithmeticMean(),
                                      stats.getStandardDeviation(),
                                      naturalFitness,
